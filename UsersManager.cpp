@@ -3,35 +3,11 @@
 UsersManager::UsersManager()
 {
 	User firstAdmin;
-	firstAdmin.getDefaultAdmin();
-	allUsers.push_back(firstAdmin);
+	firstAdmin = firstAdmin.getDefaultAdmin();
+	allUsers.emplace_back(firstAdmin);
 }
 
-User& UsersManager::findActiveUser()
-{
-	for (int i = 0; i < allUsers.size(); ++i)
-	{
-		if (allUsers[i].isActive())
-			return allUsers[i];
-	}
-}
-
-void UsersManager::logOut()
-{
-	if (activeUser)
-	{
-		User* toBeLoggedOut = &findActiveUser();
-		toBeLoggedOut->endSession();
-		activeUser = false;
-		if (toBeLoggedOut->isAdministrator())
-			activeAdmin = false;
-	}
-	else
-		std::cout << "You are not logged in." << std::endl;
-}
-
-
-void UsersManager::logIn(const User& user)
+void UsersManager::logIn(const User & user)
 {
 	if (!activeUser)
 	{
@@ -59,33 +35,59 @@ void UsersManager::logIn(const User& user)
 		std::cout << "You are already logged in." << std::endl;
 }
 
+void UsersManager::logOut()
+{
+	if (activeUser)
+	{
+		User* toBeLoggedOut = &findActiveUser();
+		toBeLoggedOut->endSession();
+
+		activeUser = false;
+		if (toBeLoggedOut->isAdministrator())
+			activeAdmin = false;
+	}
+	else
+		std::cout << "You are not logged in." << std::endl;
+}
+
+User & UsersManager::findActiveUser()
+{
+	for (int i = 0; i < allUsers.size(); ++i)
+	{
+		if (allUsers[i].isActive())
+			return allUsers[i];
+	}
+}
+
 void UsersManager::addUser(const User& user)
 {
 	if (activeAdmin)
-		allUsers.push_back(user);
+		allUsers.emplace_back(user);
 	else
 		std::cout << "You need to log in as admin." << std::endl;
 }
 
-void UsersManager::removeUser(const User& toBeRemoved)
+
+void UsersManager::removeUser(const User & toBeRemoved)
 {
 	if (toBeRemoved.isDefaultAdmin())
 	{
 		std::cout << "You cannot remove the default admin." << std::endl;
 		return;
 	}
+
 	if (activeAdmin)
 		removeUserHelper(toBeRemoved);
 	else
 		std::cout << "You need to log in as admin." << std::endl;
 }
 
-void UsersManager::removeUserHelper(const User& toBeRemoved)
+void UsersManager::removeUserHelper(const User & toBeRemoved)
 {
 	std::vector<User>::iterator iterUsers;
 	for (iterUsers = allUsers.begin(); iterUsers != allUsers.end(); iterUsers++)
 	{
-		if (*iterUsers == toBeRemoved)
+		if ((*iterUsers).compareUsername(toBeRemoved))
 		{
 			allUsers.erase(iterUsers);
 			break;
@@ -93,13 +95,7 @@ void UsersManager::removeUserHelper(const User& toBeRemoved)
 	}
 }
 
-void UsersManager::setUsers(const std::vector<User>& users)
-{
-	if(!users.empty())
-		allUsers = users;
-}
-
-const std::vector<User>& UsersManager::getUsers() const
+std::vector<User> & UsersManager::getUsers()
 {
 	return allUsers;
 }

@@ -6,23 +6,39 @@
 
 class CommandsProcesser : public FilesCommandsProcesser,public ArchivesCommandsProcesser
 {
+
 public:
-	CommandsProcesser(ArchivesManager& archives);
-	~CommandsProcesser();
+
+	CommandsProcesser(ArchivesManager & archives);
+
 	void proccessCommand();
 
-private:
-	void expectCommand();
-	void extractBooksFromFile();
-	void exctractUsersFromFile();
-	void deleteBooksFromMemory();
-	void saveBooksToFile();
-	void saveBooksToNewFile();
-	void saveUsersToFile();
 
 private:
+
+	void expectCommand();
+
+	void extractBooksFromFile();
+
+	void extractUsersFromFile();
+
+	void deleteBooksFromMemory();
+
+	void saveBooksToFile();
+
+	void saveBooksToNewFile();
+
+	void saveUsersToFile();
+
+	void finalize();
+
+
+private:
+
 	std::string command;
+
 	std::string option;
+
 };
 
 #endif

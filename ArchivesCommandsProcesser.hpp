@@ -5,27 +5,41 @@
 
 class ArchivesCommandsProcesser
 {
-public:
-	ArchivesCommandsProcesser(ArchivesManager& archives) : archivesInSystem(&archives) {}
 
 protected:
+
+	ArchivesCommandsProcesser(ArchivesManager & archives) : archivesInSystem(&archives) {}
+
 	void processLogin();
+
 	void processLogout();
-	void processBooksAll() const;
-	void processBooksFind() const;
-	void processBooksSort();
-	void processBooksInfo() const;
-	void processBooksAdd();
-	void processBooksRemove();
+
 	void processUsersAdd();
+
 	void processUsersRemove();
-	void setBooks(const std::vector<Book>&);
-	void setUsers(const std::vector<User>&);
+
+	void processBooksAll() const;
+
+	void processBooksFind() const;
+
+	void processBooksSort();
+
+	void processBooksInfo() const;
+
+	void processBooksAdd();
+
+	void processBooksRemove();
+
 	void deleteBooksFromMemory();
-	const std::vector<Book>& getBooks() const;
-	const std::vector<User>& getUsers() const;
+
+	std::vector<Book> & getBooks();
+
+	std::vector<User> & getUsers();
+
 
 private:
+
 	ArchivesManager* archivesInSystem;
+
 };
 #endif

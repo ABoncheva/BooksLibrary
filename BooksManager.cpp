@@ -1,11 +1,22 @@
 #include "BooksManager.hpp"
 
+void BooksManager::freeBooks()
+{
+	allBooks.clear();
+}
+
+std::vector<Book> & BooksManager::getBooks()
+{
+	return allBooks;
+}
+
 void BooksManager::showAllBooks(const int desc) const
 {
 	if (desc == 0)
 	{
 		printFromBeg();
 	}
+
 	if (desc == 1)
 	{
 		printFromEnd();
@@ -30,14 +41,15 @@ void BooksManager::printFromEnd() const
 	}
 }
 
-void BooksManager::addBook(const Book& newBook)
+void BooksManager::addBook(const Book & newBook)
 {
-	allBooks.push_back(newBook);
+	allBooks.emplace_back(newBook);
 }
 
-void BooksManager::removeBook(const Book& toBeRemoved)
+void BooksManager::removeBook(const Book & toBeRemoved)
 {
 	std::vector<Book>::iterator iterBooks;
+
 	for (iterBooks = allBooks.begin(); iterBooks != allBooks.end(); iterBooks++)
 	{
 		if (*iterBooks == toBeRemoved)
@@ -48,38 +60,35 @@ void BooksManager::removeBook(const Book& toBeRemoved)
 	}
 }
 
-void BooksManager::setBooks(const std::vector<Book>& books)
-{
-	if (!books.empty())
-		allBooks = books;
-}
-
-void BooksManager::freeBooks()
-{
-	allBooks.clear();
-}
-
-const std::vector<Book>& BooksManager::getBooks() const
-{
-	return allBooks;
-}
-
-void BooksManager::ascendingSortBooks(const BookSearchCriteria& option)
+void BooksManager::ascendingSortBooks(const BookCompareCriteria & option)
 {
 	mergeSort(0, allBooks.size() - 1, option);
 }
 
+void BooksManager::mergeSort(int startIndex, int endIndex, const BookCompareCriteria & option)
+{
+	if (startIndex < endIndex)
+	{
+		int mid = (startIndex + endIndex) / 2;
+
+		mergeSort(startIndex, mid, option);
+		mergeSort(mid + 1, endIndex, option);
+
+		mergeArrays(startIndex, mid, endIndex, option);
+	}
+}
+
 void BooksManager::mergeArrays(int startIndex, int midIndex, int endIndex,
-	const BookSearchCriteria& option)
+	const BookCompareCriteria & option)
 {
 	std::vector<Book> arrFirst, arrSecond;
 	for (int i = startIndex; i <= midIndex; i++)
 	{
-		arrFirst.push_back(allBooks[i]);
+		arrFirst.emplace_back(allBooks[i]);
 	}
 	for (int i = midIndex + 1; i <= endIndex; i++)
 	{
-		arrSecond.push_back(allBooks[i]);
+		arrSecond.emplace_back(allBooks[i]);
 	}
 
 	int i = 0, j = 0;
@@ -98,6 +107,7 @@ void BooksManager::mergeArrays(int startIndex, int midIndex, int endIndex,
 			j++;
 		}
 	}
+
 	while (i < arrFirst.size())
 	{
 		allBooks[pos++] = arrFirst[i];
@@ -110,14 +120,5 @@ void BooksManager::mergeArrays(int startIndex, int midIndex, int endIndex,
 	}
 }
 
-void BooksManager::mergeSort(int startIndex, int endIndex, const BookSearchCriteria& option)
-{
-	if (startIndex < endIndex) {
-		int mid = (startIndex + endIndex) / 2;
 
-		mergeSort(startIndex, mid, option);
-		mergeSort(mid + 1, endIndex, option);
 
-		mergeArrays(startIndex, mid, endIndex, option);
-	}
-}

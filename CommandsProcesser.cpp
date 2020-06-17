@@ -1,14 +1,9 @@
 #include "CommandsProcesser.hpp"
 
-CommandsProcesser::CommandsProcesser(ArchivesManager& archives ) : FilesCommandsProcesser(),
+CommandsProcesser::CommandsProcesser(ArchivesManager& archives) : FilesCommandsProcesser(),
 ArchivesCommandsProcesser(archives)
 {
-	exctractUsersFromFile();
-}
-
-CommandsProcesser::~CommandsProcesser()
-{
-	saveUsersToFile();
+	extractUsersFromFile();
 }
 
 void CommandsProcesser::proccessCommand()
@@ -31,10 +26,6 @@ void CommandsProcesser::proccessCommand()
 		if (command == "saveas")
 		{
 			saveBooksToNewFile();
-		}
-		if (command == "help")
-		{
-			//printCommandsInfo();
 		}
 		if (command == "login")
 		{
@@ -70,7 +61,7 @@ void CommandsProcesser::proccessCommand()
 		}
 		expectCommand();
 	}
-	std::cout << "Bye!" << std::endl;
+	finalize();
 }
 
 void CommandsProcesser::expectCommand()
@@ -81,16 +72,30 @@ void CommandsProcesser::expectCommand()
 
 void CommandsProcesser::extractBooksFromFile()
 {
-	openBooksFile();
-	std::vector<Book> books = deserializeBooksFileAndClose();
-	setBooks(books);
+	try
+	{
+		openBooksFile();
+	}
+	catch (int errorCode)
+	{
+		std::cout << "Books file couldn't be opened. Error code: " << errorCode << std::endl;
+		return;
+	}
+	deserializeBooksFileAndClose(getBooks());
 }
 
-void CommandsProcesser::exctractUsersFromFile()
+void CommandsProcesser::extractUsersFromFile()
 {
-	openUsersFile();
-	std::vector<User> users = deserializeUsersFileAndClose();
-	setUsers(users);
+	try
+	{
+		openUsersFile();
+	}
+	catch (int errorCode)
+	{
+		std::cout << "Users file couldn't be opened. Error code: " << errorCode << std::endl;
+		return;
+	}
+	deserializeUsersFileAndClose(getUsers());
 }
 
 void CommandsProcesser::deleteBooksFromMemory()
@@ -103,20 +108,48 @@ void CommandsProcesser::deleteBooksFromMemory()
 
 void CommandsProcesser::saveBooksToFile()
 {
-	const std::vector<Book>* books = &getBooks();
-	serializeBooks(*books);
-}
-
-void CommandsProcesser::saveUsersToFile()
-{
-	const std::vector<User>* users = &getUsers();
-	serializeUsers(*users);
+	try
+	{
+		serializeBooks(getBooks());
+	}
+	catch (int errorCode)
+	{
+		std::cout << "Books file couldn't be opened. Error code: " << errorCode << std::endl;
+		return;
+	}
 }
 
 void CommandsProcesser::saveBooksToNewFile()
 {
-	const std::vector<Book>* books = &getBooks();
 	std::string newFileName;
 	std::cin >> newFileName;
-	serializeBooks(*books, newFileName);
+
+	try
+	{
+		serializeBooks(getBooks(), newFileName);
+	}
+	catch (int errorCode)
+	{
+		std::cout << "Books file couldn't be opened. Error code: " << errorCode << std::endl;
+		return;
+	}
+}
+
+void CommandsProcesser::saveUsersToFile()
+{
+	try
+	{
+		serializeUsers(getUsers());
+	}
+	catch (int errorCode)
+	{
+		std::cout << "Users file couldn't be opened. Error code: " << errorCode << std::endl;
+		return;
+	}
+}
+
+void CommandsProcesser::finalize()
+{
+	saveUsersToFile();
+	std::cout << "Bye!" << std::endl;
 }

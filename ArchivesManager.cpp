@@ -8,7 +8,7 @@ void ArchivesManager::showAllBooks(const int desc) const
 		std::cout << "You need to log in first." << std::endl;
 }
 
-void ArchivesManager::addBook(const Book& newBook)
+void ArchivesManager::addBook(const Book & newBook)
 {
 	if (activeAdmin)
 		BooksManager::addBook(newBook);
@@ -16,7 +16,7 @@ void ArchivesManager::addBook(const Book& newBook)
 		std::cout << "You need to be logged in as admin" << std::endl;
 }
 
-void ArchivesManager::removeBook(const Book& toBeRemoved)
+void ArchivesManager::removeBook(const Book & toBeRemoved)
 {
 	if (activeAdmin)
 		BooksManager::removeBook(toBeRemoved);
@@ -24,7 +24,7 @@ void ArchivesManager::removeBook(const Book& toBeRemoved)
 		std::cout << "You need to be logged in as admin" << std::endl;
 }
 
-void ArchivesManager::ascendingSortBooks(const BookSearchCriteria& option) 
+void ArchivesManager::ascendingSortBooks(const BookCompareCriteria & option) 
 {
 	if (activeUser)
 		BooksManager::ascendingSortBooks(option);
